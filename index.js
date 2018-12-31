@@ -37,9 +37,13 @@ app.get(`/leaderboard`, async (req, res) => {
 
 app.get(`/:id`, async (req, res) => {
     const id = req.params.id;
+    if(!openRequests.hasOwnProperty(id)) {
+        return res.send({ error: "Duplicate response" })
+    }
     const initTime = openRequests[id].time;
     const username = openRequests[id].username;
     const diffTime = process.hrtime(initTime);
+    delete openRequests[id];
     const leaderboard = JSON.parse(await readFile("./leaderboard.json"));
     
     leaderboard.push({
